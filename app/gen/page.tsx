@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react"; // Removed useEffect since it's not used
 import { Button } from "@/components/ui/button";
 import { Upload, FileText, AlertCircle, Trash2, Wand2, Loader2 } from "lucide-react";
 import { useMutation, useQuery } from "convex/react";
