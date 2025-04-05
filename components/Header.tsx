@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { SignInButton, UserButton, useAuth } from "@clerk/nextjs";
 import CustomProfile from "./CustomProfile";
+import Link from "next/link";
 
 const Header = () => {
   const { isSignedIn } = useAuth();
@@ -10,21 +11,24 @@ const Header = () => {
   return (
     <header className="py-6 px-6 md:px-12 w-full">
       <div className="container mx-auto flex justify-between items-center">
-        <div className="font-bold text-xl">ResumeToFolio</div>
+        <Link href={"/"}>
+          <div className="font-bold text-xl">ResumeToFolio</div>
+        </Link>
         <div className="flex items-center gap-6">
           <nav className="hidden md:flex items-center gap-6">
-            <a
+            {/* Changed to Link component for consistency */}
+            <Link
               href="#how-it-works"
               className="text-md font-medium hover:text-primary/80 transition-colors"
             >
               How It Works
-            </a>
-            <a
-              href="#features"
+            </Link>
+            <Link
+              href="/gen"
               className="text-md font-medium hover:text-primary/80 transition-colors"
             >
-              Features
-            </a>
+              Generate
+            </Link>
           </nav>
           {isSignedIn ? (
             <CustomProfile />

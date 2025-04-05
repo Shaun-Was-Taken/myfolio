@@ -8,4 +8,16 @@ export default defineSchema({
     name: v.string(),
     imageUrl: v.string(),
   }).index("by_clerkId", ["clerkId"]),
+
+  resume: defineTable({
+    clerkId: v.string(),
+    fileName: v.string(),
+    fileId: v.string(),
+    fileSize: v.number(),
+    fileType: v.string(),
+    status: v.string(),
+    createdAt: v.number(),
+    resumeText: v.optional(v.string()),
+    fieldJSON: v.any(),
+  }).index("by_clerkId", ["clerkId"]),
 });
