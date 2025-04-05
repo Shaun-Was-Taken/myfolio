@@ -1,13 +1,25 @@
 "use client";
 
-import { useState } from "react"; // Removed useEffect since it's not used
+import { useEffect, useState } from "react"; // Removed useEffect since it's not used
 import { Button } from "@/components/ui/button";
-import { Upload, FileText, AlertCircle, Trash2, Wand2, Loader2 } from "lucide-react";
+import {
+  Upload,
+  FileText,
+  AlertCircle,
+  Trash2,
+  Wand2,
+  Loader2,
+} from "lucide-react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import Link from "next/link";
+import { useRouter } from "next/navigation"; // Added router
+import { useUser } from "@clerk/nextjs"; // Added useUser
 
 const GenPage = () => {
+  const router = useRouter(); // Initialize router
+  const { user, isLoaded } = useUser(); // Get user info
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -17,16 +29,24 @@ const GenPage = () => {
   const [parsedText, setParsedText] = useState<string | null>(null);
   const [parsing, setParsing] = useState(false);
 
+  const hasGenerated = useQuery(api.user.hasGeneratedPortfolio);
+
+  // Redirect if user has already generated a portfolio
+  useEffect(() => {
+    if (hasGenerated === true) {
+      router.push("/preview");
+    }
+  }, [hasGenerated, router]);
+
   // Fetch the resume data to get the current status
   const resume = useQuery(
-    api.resume.getResumeById, 
+    api.resume.getResumeById,
     resumeId ? { resumeId: resumeId as Id<"resume"> } : "skip"
   );
 
   const generateUploadUrl = useMutation(api.resume.generateUploadUrl);
   const saveResume = useMutation(api.resume.saveResume);
   const deleteResume = useMutation(api.resume.deleteResume);
-  const generatePortfolio = useMutation(api.resume.generatePortfolio);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -150,26 +170,6 @@ const GenPage = () => {
     }
   };
 
-  const handleGeneratePortfolio = async () => {
-    if (!resumeId) return;
-
-    setGenerating(true);
-    try {
-      if (!resumeId) throw new Error("Resume ID is required");
-      const id = resumeId as Id<"resume">;
-      await generatePortfolio({ id });
-      // Redirect to portfolio page or show success message
-      alert(
-        "Your portfolio is being generated! You'll be notified when it's ready."
-      );
-    } catch (err) {
-      console.error("Generation error:", err);
-      setError("Failed to generate portfolio. Please try again.");
-    } finally {
-      setGenerating(false);
-    }
-  };
-
   // Helper function to render the appropriate button based on resume status
   const renderActionButton = () => {
     if (!resume) {
@@ -213,15 +213,16 @@ const GenPage = () => {
 
     if (resume.status === "processed") {
       return (
-        <Button
-          size="lg"
-          className="rounded-full flex items-center gap-2"
-          onClick={handleGeneratePortfolio}
-          disabled={generating}
-        >
-          <Wand2 className="h-4 w-4" />
-          {generating ? "Generating..." : "Generate Portfolio"}
-        </Button>
+        <Link href={"/preview"}>
+          <Button
+            size="lg"
+            className="rounded-full flex items-center gap-2"
+            disabled={generating}
+          >
+            <Wand2 className="h-4 w-4" />
+            {generating ? "Generating..." : "Generate Portfolio"}
+          </Button>
+        </Link>
       );
     }
 
@@ -247,7 +248,7 @@ const GenPage = () => {
           </h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
             {uploadSuccess
-              ? resume?.status === "processed" 
+              ? resume?.status === "processed"
                 ? "Your resume has been analyzed and is ready for portfolio generation."
                 : "Your resume is being analyzed. This may take a moment."
               : "Upload your resume in PDF or DOCX format and we'll transform it into a professional portfolio website."}
@@ -373,8 +374,8 @@ const GenPage = () => {
                 {resume?.status === "processed"
                   ? "Your resume has been analyzed and is ready for portfolio generation."
                   : resume?.status === "error"
-                  ? "There was an error analyzing your resume. Please try uploading again."
-                  : "Your resume is being analyzed. This may take a moment."}
+                    ? "There was an error analyzing your resume. Please try uploading again."
+                    : "Your resume is being analyzed. This may take a moment."}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">

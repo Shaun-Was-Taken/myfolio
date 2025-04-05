@@ -7,6 +7,8 @@ export default defineSchema({
     email: v.string(),
     name: v.string(),
     imageUrl: v.string(),
+    hasGeneratedPortfolio: v.optional(v.boolean()),
+    
   }).index("by_clerkId", ["clerkId"]),
 
   resume: defineTable({
