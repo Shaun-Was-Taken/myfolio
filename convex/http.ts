@@ -41,7 +41,7 @@ const clerkWebhook = httpAction(async (ctx, request) => {
   const evenType = event.type;
 
   if (evenType == "user.created") {
-    const { id, email_addresses, first_name, last_name, image_url, username } =
+    const { id, email_addresses, first_name, last_name, image_url } =
       event.data;
     const email = email_addresses[0].email_address;
     const name = `${first_name} ${last_name}`;
@@ -52,13 +52,12 @@ const clerkWebhook = httpAction(async (ctx, request) => {
         email,
         name,
         imageUrl: image_url,
-        username: username!,
       });
     } catch (err) {
       return new Response("Error creating user", { status: 400 });
     }
   } else if (evenType == "user.updated") {
-    const { id, email_addresses, first_name, last_name, image_url, username } =
+    const { id, email_addresses, first_name, last_name, image_url } =
       event.data;
     const email = email_addresses[0].email_address;
     const name = `${first_name} ${last_name}`;
@@ -68,7 +67,6 @@ const clerkWebhook = httpAction(async (ctx, request) => {
         email,
         name,
         imageUrl: image_url,
-        username: username!,
       });
     } catch (err) {
       return new Response("Error updating user", { status: 400 });
