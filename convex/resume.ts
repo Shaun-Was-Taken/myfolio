@@ -121,6 +121,7 @@ IMPORTANT: You MUST return actual values found in the resume. ALSO, words are me
 Required JSON format with example values:
 {
   "name": "John Doe (from header)",
+  "profilePicture": "can be null",
   contact: {
   "email": "john.doe@example.com (from contact info)",
   "phone": "+1 (555) 123-4567 (from contact info)",
@@ -128,14 +129,14 @@ Required JSON format with example values:
   },
   "title": "generate from the context of the resume e.g Software Engineer, Manager, etc.",
   
-  "about": "generate an about be of who the person is e.g I am a software engineer with 5 years of experience...",
+  "about": ["generate an about be of who the person is e.g I am a software engineer with 5 years of experience..."],
   "descripton": "short sumary of about me",
   "education": [
     {
       "school": "",
       "degree": "",
       "period": "can be null",
-      "logo": "can be null",
+      "schoolLogo": "can be null",
       "courses": [list of courses],
       "activities": [list of activities],
       "honors": [list of honors mentioned in the resume],
@@ -146,6 +147,7 @@ Required JSON format with example values:
     {
       "title": "title of job",
       "company": "company name",
+      "companyLogo": "can be null",
       "period": "can be null",
       "location": "can be null",
       "description": [
@@ -165,7 +167,12 @@ Required JSON format with example values:
     }
   ],
   "skills": [],
-  "certifications": [],
+  "certifications": [
+    {
+      "title": "name of certification",
+      "description": "generate a description of certification",
+    }
+  ],
   "activities": {
     "campusInvolvement": [],
     "areasOfInterest": []
@@ -232,6 +239,16 @@ export const updateResumeWithParsedData = internalMutation({
       throw new ConvexError("Resume not found");
     }
 
+    if (args.status === "processed") {
+      const user = await ctx.db
+        .query("users")
+        .withIndex("by_clerkId", (q) => q.eq("clerkId", resume.clerkId))
+        .unique();
+
+      if (user) {
+        await ctx.db.patch(user._id, { hasGeneratedPortfolio: true });
+      }
+    }
     await ctx.db.patch(args.resumeId, {
       fieldJSON: args.fieldJSON,
       status: args.status,
@@ -323,13 +340,29 @@ export const deleteResume = mutation({
 });
 
 // Generate a portfolio from a resume
-export const generatePortfolio = mutation({
-  args: { id: v.id("resume") },
+export const getPreviewData = query({
+  args: { clerkId: v.string() },
   handler: async (ctx, args) => {
     // Get the authenticated user
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new ConvexError("Unauthorized");
     }
+
+    // Get the resume
+    const resume = await ctx.db
+      .query("resume")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", args.clerkId))
+      .order("desc")
+      .first();
+    if (!resume) {
+      throw new ConvexError("Resume not found");
+    }
+
+    if (!resume) {
+      return null;
+    }
+
+    return resume.fieldJSON;
   },
 });
