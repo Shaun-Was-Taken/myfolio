@@ -116,7 +116,7 @@ Follow these instructions carefully:
    - Skills and certifications
    - Any other relevant sections
 
-IMPORTANT: You MUST return actual values found in the resume. ALSO, words are merged togher split them aprt with a space. Do NOT return empty fields unless absolutely nothing is found. Do not add additional fields beyond the given structure.
+IMPORTANT: You MUST return actual values found in the resume. ALSO, words are merged togher split them apart, based on what makes most since, with a space, each english word MUST have a space between them. Do NOT return empty fields unless absolutely nothing is found. Do not add additional fields beyond the given structure.
 
 Required JSON format with example values:
 {
@@ -130,7 +130,7 @@ Required JSON format with example values:
   "title": "generate from the context of the resume e.g Software Engineer, Manager, etc.",
   
   "about": ["generate an about be of who the person is e.g I am a software engineer with 5 years of experience..."],
-  "descripton": "short sumary of about me",
+  "descripton": "generate a short summary of what is generated in about feild",
   "education": [
     {
       "school": "",

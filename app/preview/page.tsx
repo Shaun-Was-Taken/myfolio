@@ -194,7 +194,7 @@ const PreviewPage = () => {
                 </h1>
                 <p className="text-lg md:text-xl mb-4">{displayData.title}</p>
                 <p className="text-muted-foreground">
-                  {displayData.description}
+                  {displayData.descripton}
                 </p>
               </div>
             </div>
