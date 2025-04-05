@@ -29,7 +29,6 @@ export const createUser = internalMutation({
       email: args.email,
       name: args.name,
       imageUrl: args.imageUrl,
-      username: args.name,
     });
   },
 });
@@ -57,7 +56,6 @@ export const updateUser = internalMutation({
       email: args.email,
       name: args.name,
       imageUrl: args.imageUrl,
-      username: args.name,
     });
   },
 });
