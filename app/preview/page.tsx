@@ -4,9 +4,21 @@ import ExperienceCard from "@/components/ExperienceCard";
 import EducationCard from "@/components/EducationCard";
 import ProjectCard from "@/components/ProjectCard";
 import ContactSection from "@/components/ContactSection";
-import { Hand, Github, Linkedin, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Hand,
+  Github,
+  Linkedin,
+  ChevronDown,
+  ChevronUp,
+  Download,
+} from "lucide-react";
 import CertificationCard from "@/components/CertificationCard";
-
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 // Sample portfolio data - replace with your actual data
 const demo = {
   name: "Zain Ghosheh",
@@ -151,17 +163,38 @@ import {
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 
 const PreviewPage = () => {
   const { user, isLoaded } = useUser();
+  const [resumeFileId, setResumeFileId] = useState<string | null>(null);
 
   // Move the useQuery hook here, before any conditional returns
   const portfolioData = useQuery(
     api.resume.getPreviewData,
     isLoaded && user ? { clerkId: user.id } : "skip"
   );
+
+  // Get the user's resumes to find the file ID for download
+  const userResumes = useQuery(
+    api.resume.getUserResumes,
+    isLoaded && user ? {} : "skip" // Only run query when user is authenticated
+  );
+
+  // Get the download URL when resumeFileId is available
+  const downloadUrl = useQuery(
+    api.resume.getResumeDownloadUrl,
+    resumeFileId ? { fileId: resumeFileId } : "skip"
+  );
+
+  // Set the resumeFileId when userResumes are loaded
+  useEffect(() => {
+    if (userResumes && userResumes.length > 0) {
+      setResumeFileId(userResumes[0].fileId);
+    }
+  }, [userResumes]);
 
   // Use useEffect for navigation instead of conditional rendering
   useEffect(() => {
@@ -180,6 +213,13 @@ const PreviewPage = () => {
 
   console.log(displayData);
 
+  // Handle resume download
+  const handleDownload = () => {
+    if (downloadUrl) {
+      window.open(downloadUrl, "_blank");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col items-center">
       <main className="w-[50%] max-w-7xl">
@@ -189,13 +229,49 @@ const PreviewPage = () => {
             <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
               <div>
                 <h1 className="text-4xl md:text-5xl font-bold mb-2 flex items-center">
-                  Hi, I'm {displayData.name}{" "}
-                  <Hand className="ml-2 w-8 h-8 text-amber-400" />
+                  Hi, I'm {displayData.name} 👋
                 </h1>
                 <p className="text-lg md:text-xl mb-4">{displayData.title}</p>
                 <p className="text-muted-foreground">
-                  {displayData.descripton}
+                  {displayData.description}
                 </p>
+                <div className="pt-5 flex gap-5 text-muted-foreground">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Link href={"/"}>
+                          <Github />
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent>My GitHub</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Link href={"/"}>
+                          <Linkedin />
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent>My Linkedin</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          onClick={handleDownload}
+                          className="cursor-pointer"
+                        >
+                          <Download />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Download My Resume</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
               </div>
             </div>
           </div>
@@ -308,8 +384,8 @@ const PreviewPage = () => {
                 My Projects
               </h2>
               <p className="mb-8">
-                Here are some of my notable projects that highlight my technical
-                skills and interests.
+                I&apos;ve worked on a variety of projects, from simple websites
+                to complex web applications. Here are a few of my favorites.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -320,8 +396,14 @@ const PreviewPage = () => {
                     description={project.description}
                     period={project.period}
                     tags={project.tags}
-                    githubLink={project.githubLink || undefined}
-                    liveLink={project.liveLink || undefined}
+                    githubLink={
+                      project.githubLink ||
+                      "https://github.com/Shaun-Was-Taken/StripeBoard"
+                    }
+                    liveLink={
+                      project.liveLink || "http://localhost:3000/preview"
+                    }
+                    image="https://github.com/shadcn.png"
                   />
                 ))}
               </div>

@@ -130,7 +130,7 @@ Required JSON format with example values:
   "title": "generate from the context of the resume e.g Software Engineer, Manager, etc.",
   
   "about": ["generate an about be of who the person is e.g I am a software engineer with 5 years of experience..."],
-  "descripton": "generate a short summary of what is generated in about feild",
+  "description": "generate a short summary of what is generated in about feild",
   "education": [
     {
       "school": "",
@@ -159,9 +159,9 @@ Required JSON format with example values:
   "projects": [
     {
       "title": "name of project",
-      "description": "",
+      "description": "generate project description, and highlight the keywords with ****",
       "period": "can be null",
-      "tags": [],
+      "tags": ["generate tags based on the project at max 5 tags]"],
       "githubLink": "can be null",
       "liveLink": "can be null"
     }
