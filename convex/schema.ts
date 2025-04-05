@@ -8,8 +8,10 @@ export default defineSchema({
     name: v.string(),
     imageUrl: v.string(),
     hasGeneratedPortfolio: v.optional(v.boolean()),
+    displayId: v.string()
+
     
-  }).index("by_clerkId", ["clerkId"]),
+  }).index("by_clerkId", ["clerkId"] ).index("by_displayId", ["displayId"]),
 
   resume: defineTable({
     clerkId: v.string(),
