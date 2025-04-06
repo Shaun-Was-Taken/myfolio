@@ -368,10 +368,9 @@ export const getPreviewData = query({
   },
 });
 
-
 // Generate a portfolio from a resume
 export const getPublishData = query({
-  args: { clerkId: v.string(), displayId: v.string()},
+  args: { clerkId: v.string(), displayId: v.string() },
   handler: async (ctx, args) => {
     // Get the authenticated user
     const identity = await ctx.auth.getUserIdentity();
@@ -379,9 +378,11 @@ export const getPublishData = query({
       throw new ConvexError("Unauthorized");
     }
 
-    const user = await ctx.runQuery(internal.user.getUserByDisplayId, { displayId: args.displayId })
+    const user = await ctx.runQuery(internal.user.getUserByDisplayId, {
+      displayId: args.displayId,
+    });
 
-    if(user.displayId! == args.displayId) {
+    if (user.displayId !== args.displayId) {
       throw new ConvexError("Display ID does not exist or is incorrect");
     }
 
@@ -398,7 +399,6 @@ export const getPublishData = query({
     if (!resume) {
       return null;
     }
-
     return resume.fieldJSON;
   },
 });
