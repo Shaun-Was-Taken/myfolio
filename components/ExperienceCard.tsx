@@ -33,12 +33,16 @@ const ExperienceCard = ({
             {logo ? (
               <img src={logo} alt={company} className="w-8 h-8" />
             ) : (
-              <span className="flex items-center justify-center w-full h-full font-bold">{company.charAt(0)}</span>
+              <span className="flex items-center justify-center w-full h-full font-bold">
+                {company.charAt(0)}
+              </span>
             )}
           </div>
           <div className="text-left flex-1">
-            <h3 className="font-bold text-lg">{title} | {company}</h3>
-            <p className="text-muted-foreground text-sm">{period} • {location}</p>
+            <h3 className="font-bold text-lg">
+              {title} | {company}
+            </h3>
+            <p className="text-muted-foreground text-sm">{period} </p>
           </div>
         </div>
       </AccordionTrigger>
