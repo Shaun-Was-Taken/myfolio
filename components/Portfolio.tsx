@@ -52,29 +52,31 @@ const Portfolio = ({ portfolioData, isPreview }: PortfolioProps) => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center">
-      <main className={`${isPreview ? "w-[70%]" : "w-[50%]"} max-w-7xl`}>
+      <main
+        className={`w-full md:${isPreview ? "w-[70%]" : "w-[50%]"} lg:${isPreview ? "w-[70%]" : "w-[50%]"} max-w-7xl px-4 sm:px-6`}
+      >
         {/* Hero Section */}
-        <section className="py-20 flex justify-between items-center">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-              <div>
-                <h1 className="text-4xl md:text-5xl font-bold mb-2 flex items-center">
+        <section className="py-10 md:py-20">
+          <div className="container mx-auto px-0 sm:px-4">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-8">
+              <div className="text-center md:text-left order-2 md:order-1">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2 flex items-center justify-center md:justify-start">
                   Hi, I'm {portfolioData.name} 👋
                 </h1>
-                <p className="text-lg md:text-xl mb-4 flex gap-5 mt-2">
+                <p className="text-lg md:text-xl mb-4 flex gap-5 mt-2 justify-center md:justify-start">
                   {portfolioData.title}{" "}
                 </p>
                 <p className="text-muted-foreground">
                   {portfolioData.description}
                 </p>
               </div>
+              <div className="flex justify-center md:justify-end order-1 md:order-2 mb-6 md:mb-0">
+                <Avatar className="h-28 w-28 md:h-36 md:w-36 lg:h-40 lg:w-40">
+                  <AvatarImage src={portfolioData.profilePicture} />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+              </div>
             </div>
-          </div>
-          <div>
-            <Avatar className="h-40 w-40">
-              <AvatarImage src={portfolioData.profilePicture} />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
           </div>
         </section>
 
