@@ -9,11 +9,14 @@ import CertificationCard from "@/components/CertificationCard";
 import { Accordion } from "@/components/ui/accordion";
 import { useUser } from "@clerk/nextjs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { BlurFade } from "./magicui/blur-fade";
 
 interface PortfolioProps {
   portfolioData: any;
   isPreview?: boolean;
 }
+
+const BLUR_FADE_DELAY = 0.04;
 
 const Portfolio = ({ portfolioData, isPreview }: PortfolioProps) => {
   const { isLoaded } = useUser();
@@ -55,21 +58,23 @@ const Portfolio = ({ portfolioData, isPreview }: PortfolioProps) => {
 
         {/* About Section */}
         <section id="about" className="pb-16">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold mb-6 border-b pb-2">About</h2>
-            <div className="prose max-w-none">
-              {portfolioData.about.map((paragraph: string, index: any) => (
-                <p
-                  key={index}
-                  className={
-                    index < portfolioData.about.length - 1 ? "mb-4" : ""
-                  }
-                >
-                  {paragraph}
-                </p>
-              ))}
+          <BlurFade delay={BLUR_FADE_DELAY * 3}>
+            <div className="container mx-auto px-4">
+              <h2 className="text-3xl font-bold mb-6 border-b pb-2">About</h2>
+              <div className="prose max-w-none">
+                {portfolioData.about.map((paragraph: string, index: any) => (
+                  <p
+                    key={index}
+                    className={
+                      index < portfolioData.about.length - 1 ? "mb-4" : ""
+                    }
+                  >
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
             </div>
-          </div>
+          </BlurFade>
         </section>
 
         {/* Experience Section */}
@@ -82,16 +87,20 @@ const Portfolio = ({ portfolioData, isPreview }: PortfolioProps) => {
 
               <Accordion type="single" collapsible className="w-full">
                 {portfolioData.experience.map((exp: any, index: any) => (
-                  <ExperienceCard
+                  <BlurFade
                     key={index}
-                    title={exp.title}
-                    company={exp.company}
-                    period={exp.period}
-                    location={exp.location}
-                    descriptions={exp.description}
-                    logo={exp.companyLogo}
-                    value={`experience-${index}`}
-                  />
+                    delay={BLUR_FADE_DELAY * 6 + index * 0.05}
+                  >
+                    <ExperienceCard
+                      title={exp.title}
+                      company={exp.company}
+                      period={exp.period}
+                      location={exp.location}
+                      descriptions={exp.description}
+                      logo={exp.companyLogo}
+                      value={`experience-${index}`}
+                    />
+                  </BlurFade>
                 ))}
               </Accordion>
             </div>
@@ -108,18 +117,23 @@ const Portfolio = ({ portfolioData, isPreview }: PortfolioProps) => {
 
               <Accordion type="single" collapsible className="w-full">
                 {portfolioData.education.map((edu: any, index: any) => (
-                  <EducationCard
+                  <BlurFade
                     key={index}
-                    school={edu.school}
-                    degree={edu.degree}
-                    period={edu.period || null}
-                    logo={edu.logo || undefined}
-                    courses={edu.courses?.join(", ")}
-                    activities={edu.activities}
-                    honors={edu.honors}
-                    gpa={edu.gpa}
-                    value={`education-${index}`}
-                  />
+                    delay={BLUR_FADE_DELAY * 8 + index * 0.05}
+                  >
+                    <EducationCard
+                      key={index}
+                      school={edu.school}
+                      degree={edu.degree}
+                      period={edu.period || null}
+                      logo={edu.logo || undefined}
+                      courses={edu.courses?.join(", ")}
+                      activities={edu.activities}
+                      honors={edu.honors}
+                      gpa={edu.gpa}
+                      value={`education-${index}`}
+                    />
+                  </BlurFade>
                 ))}
               </Accordion>
             </div>
@@ -129,19 +143,21 @@ const Portfolio = ({ portfolioData, isPreview }: PortfolioProps) => {
         {/* Skills Section */}
         {portfolioData.skills.length > 0 && (
           <section id="skills" className="pb-16">
-            <div className="container mx-auto px-4">
-              <h2 className="text-3xl font-bold mb-6 border-b pb-2">Skills</h2>
+            <BlurFade delay={BLUR_FADE_DELAY * 10}>
+              <div className="container mx-auto px-4">
+                <h2 className="text-3xl font-bold mb-6 border-b pb-2">Skills</h2>
 
-              {portfolioData.skills.length > 0 && (
-                <div className="mb-6">
-                  <div>
-                    {portfolioData.skills.map((skill: any, index: any) => (
-                      <SkillTag key={index} name={skill} />
-                    ))}
+                {portfolioData.skills.length > 0 && (
+                  <div className="mb-6">
+                    <div>
+                      {portfolioData.skills.map((skill: any, index: any) => (
+                        <SkillTag key={index} name={skill} />
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            </BlurFade>
           </section>
         )}
 
@@ -159,16 +175,21 @@ const Portfolio = ({ portfolioData, isPreview }: PortfolioProps) => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {portfolioData.projects.map((project: any, index: any) => (
-                  <ProjectCard
+                  <BlurFade
                     key={index}
-                    title={project.title}
-                    description={project.description}
-                    period={project.period}
-                    tags={project.tags}
-                    githubLink={project.githubLink || undefined}
-                    liveLink={project.liveLink || undefined}
-                    image={project.projectPicture || undefined}
-                  />
+                    delay={BLUR_FADE_DELAY * 12 + index * 0.05}
+                  >
+                    <ProjectCard
+                      key={index}
+                      title={project.title}
+                      description={project.description}
+                      period={project.period}
+                      tags={project.tags}
+                      githubLink={project.githubLink || undefined}
+                      liveLink={project.liveLink || undefined}
+                      image={project.projectPicture || undefined}
+                    />
+                  </BlurFade>
                 ))}
               </div>
             </div>
@@ -185,11 +206,16 @@ const Portfolio = ({ portfolioData, isPreview }: PortfolioProps) => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {portfolioData.certifications.map((cert: any, index: any) => (
-                  <CertificationCard
+                  <BlurFade
                     key={index}
-                    title={(cert as any).title}
-                    description={(cert as any).description}
-                  />
+                    delay={BLUR_FADE_DELAY * 14 + index * 0.05}
+                  >
+                    <CertificationCard
+                      key={index}
+                      title={(cert as any).title}
+                      description={(cert as any).description}
+                    />
+                  </BlurFade>
                 ))}
               </div>
             </div>
@@ -200,53 +226,57 @@ const Portfolio = ({ portfolioData, isPreview }: PortfolioProps) => {
         {portfolioData.activities.campusInvolvement.length > 0 &&
           portfolioData.activities.campusInvolvement.length > 0 && (
             <section className="pb-16">
-              <div className="container mx-auto px-4">
-                <h2 className="text-3xl font-bold mb-6 border-b pb-2">
-                  Activities & Interests
-                </h2>
+              <BlurFade delay={BLUR_FADE_DELAY * 16}>
+                <div className="container mx-auto px-4">
+                  <h2 className="text-3xl font-bold mb-6 border-b pb-2">
+                    Activities & Interests
+                  </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {portfolioData.activities.campusInvolvement.length > 0 && (
-                    <div>
-                      <h3 className="font-bold text-lg mb-2">
-                        Campus Involvement
-                      </h3>
-                      <ul className="list-disc pl-5">
-                        {portfolioData.activities.campusInvolvement.map(
-                          (activity: any, index: any) => (
-                            <li key={index}>{activity}</li>
-                          )
-                        )}
-                      </ul>
-                    </div>
-                  )}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {portfolioData.activities.campusInvolvement.length > 0 && (
+                      <div>
+                        <h3 className="font-bold text-lg mb-2">
+                          Campus Involvement
+                        </h3>
+                        <ul className="list-disc pl-5">
+                          {portfolioData.activities.campusInvolvement.map(
+                            (activity: any, index: any) => (
+                              <li key={index}>{activity}</li>
+                            )
+                          )}
+                        </ul>
+                      </div>
+                    )}
 
-                  {portfolioData.activities.areasOfInterest.length > 0 && (
-                    <div>
-                      <h3 className="font-bold text-lg mb-2">
-                        Areas of Interest
-                      </h3>
-                      <ul className="list-disc pl-5">
-                        {portfolioData.activities.areasOfInterest.map(
-                          (interest: any, index: any) => (
-                            <li key={index}>{interest}</li>
-                          )
-                        )}
-                      </ul>
-                    </div>
-                  )}
+                    {portfolioData.activities.areasOfInterest.length > 0 && (
+                      <div>
+                        <h3 className="font-bold text-lg mb-2">
+                          Areas of Interest
+                        </h3>
+                        <ul className="list-disc pl-5">
+                          {portfolioData.activities.areasOfInterest.map(
+                            (interest: any, index: any) => (
+                              <li key={index}>{interest}</li>
+                            )
+                          )}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
+              </BlurFade>
             </section>
           )}
 
         {/* Contact Section */}
-        <ContactSection
-          email={portfolioData.contact.email}
-          phone={portfolioData.contact.phone}
-          location={portfolioData.contact.location}
-          linkedin={undefined}
-        />
+        <BlurFade delay={BLUR_FADE_DELAY * 18}>
+          <ContactSection
+            email={portfolioData.contact.email}
+            phone={portfolioData.contact.phone}
+            location={portfolioData.contact.location}
+            linkedin={undefined}
+          />
+        </BlurFade>
       </main>
     </div>
   );
