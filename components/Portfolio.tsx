@@ -26,18 +26,11 @@ interface PortfolioProps {
 }
 
 const Portfolio = ({ portfolioData }: PortfolioProps) => {
-  const { user, isLoaded } = useUser();
+  const { isLoaded } = useUser();
 
-  // Move the useQuery hook here, before any conditional returns
-
-  // Use useEffect for navigation instead of conditional rendering
-  useEffect(() => {
-    if (isLoaded && !user) {
-      window.location.href = "/";
-    }
-  }, [isLoaded, user]);
-
-  // Show loading state while checking user or loading data
+  // Remove the useEffect that redirects non-logged in users
+  
+  // Show loading state while loading data
   if (!isLoaded || portfolioData === undefined) {
     return <div>Loading...</div>;
   }

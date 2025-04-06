@@ -370,13 +370,9 @@ export const getPreviewData = query({
 
 // Generate a portfolio from a resume
 export const getPublishData = query({
-  args: { clerkId: v.string(), displayId: v.string() },
-  handler: async (ctx, args) => {
+  args: { displayId: v.string() },
+  handler: async (ctx, args): Promise<any> => {
     // Get the authenticated user
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      throw new ConvexError("Unauthorized");
-    }
 
     const user = await ctx.runQuery(internal.user.getUserByDisplayId, {
       displayId: args.displayId,
@@ -389,16 +385,17 @@ export const getPublishData = query({
     // Get the resume
     const resume = await ctx.db
       .query("resume")
-      .withIndex("by_clerkId", (q) => q.eq("clerkId", args.clerkId))
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", user.clerkId))
       .order("desc")
       .first();
     if (!resume) {
       throw new ConvexError("Resume not found");
     }
 
-    if (!resume) {
-      return null;
-    }
+    // This check is redundant since we already check above
+    // if (!resume) {
+    //   return null;
+    // }
     return resume.fieldJSON;
   },
 });
