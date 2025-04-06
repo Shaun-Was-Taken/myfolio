@@ -88,7 +88,7 @@ const PreviewPage = () => {
     return <div>Loading...</div>;
   }
   return (
-    <div className="flex justify-center gap-5 ">
+    <div className="flex justify-center gap-5 w-screen">
       <div className="max-w-[1200px]">
         <Portfolio isPreview portfolioData={portfolioData} />
       </div>
