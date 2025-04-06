@@ -131,7 +131,7 @@ Required JSON format with example values:
   "title": "generate from the context of the resume e.g Software Engineer, Manager, etc.",
   
   "about": ["generate an about be of who the person is e.g I am a software engineer with 5 years of experience..."],
-  "descripton": "generate a short summary of what is generated in about feild",
+  "description": "generate a short summary of what is generated in about feild",
   "education": [
     {
       "school": "",
@@ -311,6 +311,399 @@ export const getResumeDownloadUrl = query({
 });
 
 // Add these functions to your existing resume.ts file
+
+// Update specific fields in the resume JSON
+export const updateResumeField = mutation({
+  args: {
+    field: v.string(),
+    value: v.any(),
+  },
+  handler: async (ctx, args) => {
+    // Get the authenticated user
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Unauthorized");
+    }
+    const userId = identity.subject;
+
+    // Get the most recent resume for this user
+    const resume = await ctx.db
+      .query("resume")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
+      .order("desc")
+      .first();
+    
+    if (!resume) {
+      throw new ConvexError("Resume not found");
+    }
+
+    // Create a deep copy of the fieldJSON
+    const updatedFieldJSON = { ...resume.fieldJSON };
+
+    // Handle nested fields with dot notation (e.g., "contact.email")
+    if (args.field.includes(".")) {
+      const fieldParts = args.field.split(".");
+      let current = updatedFieldJSON;
+      
+      // Navigate to the nested object
+      for (let i = 0; i < fieldParts.length - 1; i++) {
+        const part = fieldParts[i];
+        if (!current[part]) {
+          current[part] = {};
+        }
+        current = current[part];
+      }
+      
+      // Set the value in the nested object
+      current[fieldParts[fieldParts.length - 1]] = args.value;
+    } else {
+      // Set the field directly in the object
+      updatedFieldJSON[args.field] = args.value;
+    }
+
+    // Update the resume with the modified fieldJSON
+    await ctx.db.patch(resume._id, {
+      fieldJSON: updatedFieldJSON,
+    });
+
+    return updatedFieldJSON;
+  },
+});
+
+// Generate upload URL for images (profile, school logos, etc.)
+export const generateImageUploadUrl = mutation({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Unauthorized");
+    }
+    return await ctx.storage.generateUploadUrl();
+  },
+});
+
+// Function to update profile picture after upload
+export const updateProfilePictureUrl = mutation({
+  args: {
+    storageId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Get the authenticated user
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Unauthorized");
+    }
+    const userId = identity.subject;
+
+    // Get the most recent resume for this user
+    const resume = await ctx.db
+      .query("resume")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
+      .order("desc")
+      .first();
+    
+    if (!resume) {
+      throw new ConvexError("Resume not found");
+    }
+
+    try {
+      // Verify the file exists in storage
+      const exists = (await ctx.storage.getUrl(args.storageId)) !== null;
+      if (!exists) {
+        throw new ConvexError("File not found in storage");
+      }
+      
+      // Get the URL for the stored image
+      const imageUrl = await ctx.storage.getUrl(args.storageId);
+      
+      // Create a deep copy of the fieldJSON
+      const updatedFieldJSON = { ...resume.fieldJSON };
+      
+      // Update the profilePicture field
+      updatedFieldJSON.profilePicture = imageUrl;
+
+      // Update the resume with the modified fieldJSON
+      await ctx.db.patch(resume._id, {
+        fieldJSON: updatedFieldJSON,
+      });
+
+      return { profilePicture: imageUrl };
+    } catch (error) {
+      console.error("Error updating profile picture:", error);
+      throw new ConvexError("Failed to update profile picture");
+    }
+  },
+});
+
+// Function to update school logo
+export const updateSchoolLogo = mutation({
+  args: {
+    storageId: v.string(),
+    educationIndex: v.number(),
+  },
+  handler: async (ctx, args) => {
+    // Get the authenticated user
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Unauthorized");
+    }
+    const userId = identity.subject;
+
+    // Get the most recent resume for this user
+    const resume = await ctx.db
+      .query("resume")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
+      .order("desc")
+      .first();
+    
+    if (!resume) {
+      throw new ConvexError("Resume not found");
+    }
+
+    try {
+      // Verify the file exists in storage
+      const exists = (await ctx.storage.getUrl(args.storageId)) !== null;
+      if (!exists) {
+        throw new ConvexError("File not found in storage");
+      }
+      
+      // Get the URL for the stored image
+      const imageUrl = await ctx.storage.getUrl(args.storageId);
+      
+      // Create a deep copy of the fieldJSON
+      const updatedFieldJSON = { ...resume.fieldJSON };
+      
+      // Make sure education field exists and is an array
+      if (!updatedFieldJSON.education || !Array.isArray(updatedFieldJSON.education)) {
+        throw new ConvexError("Education field not found or is not an array");
+      }
+      
+      // Make sure the educationIndex is valid
+      if (args.educationIndex < 0 || args.educationIndex >= updatedFieldJSON.education.length) {
+        throw new ConvexError("Invalid education index");
+      }
+      
+      // Update the logo field for the specified education item
+      updatedFieldJSON.education[args.educationIndex].logo = imageUrl;
+
+      // Update the resume with the modified fieldJSON
+      await ctx.db.patch(resume._id, {
+        fieldJSON: updatedFieldJSON,
+      });
+
+      return { 
+        success: true,
+        educationIndex: args.educationIndex,
+        logoUrl: imageUrl 
+      };
+    } catch (error) {
+      console.error("Error updating school logo:", error);
+      throw new ConvexError("Failed to update school logo");
+    }
+  },
+});
+
+// Function to update project links
+export const updateProjectLinks = mutation({
+  args: {
+    projectIndex: v.number(),
+    githubLink: v.optional(v.union(v.string(), v.null())),
+    liveLink: v.optional(v.union(v.string(), v.null())),
+  },
+  handler: async (ctx, args) => {
+    // Get the authenticated user
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Unauthorized");
+    }
+    const userId = identity.subject;
+
+    // Get the most recent resume for this user
+    const resume = await ctx.db
+      .query("resume")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
+      .order("desc")
+      .first();
+    
+    if (!resume) {
+      throw new ConvexError("Resume not found");
+    }
+
+    try {
+      // Create a deep copy of the fieldJSON
+      const updatedFieldJSON = { ...resume.fieldJSON };
+      
+      // Make sure projects field exists and is an array
+      if (!updatedFieldJSON.projects || !Array.isArray(updatedFieldJSON.projects)) {
+        throw new ConvexError("Projects field not found or is not an array");
+      }
+      
+      // Make sure the projectIndex is valid
+      if (args.projectIndex < 0 || args.projectIndex >= updatedFieldJSON.projects.length) {
+        throw new ConvexError("Invalid project index");
+      }
+      
+      // Update the link fields if provided
+      if (args.githubLink !== undefined) {
+        updatedFieldJSON.projects[args.projectIndex].githubLink = args.githubLink;
+      }
+      
+      if (args.liveLink !== undefined) {
+        updatedFieldJSON.projects[args.projectIndex].liveLink = args.liveLink;
+      }
+
+      // Update the resume with the modified fieldJSON
+      await ctx.db.patch(resume._id, {
+        fieldJSON: updatedFieldJSON,
+      });
+
+      return { 
+        success: true,
+        projectIndex: args.projectIndex,
+        githubLink: updatedFieldJSON.projects[args.projectIndex].githubLink,
+        liveLink: updatedFieldJSON.projects[args.projectIndex].liveLink
+      };
+    } catch (error) {
+      console.error("Error updating project links:", error);
+      throw new ConvexError("Failed to update project links");
+    }
+  },
+});
+
+// Function to update project image
+export const updateProjectImage = mutation({
+  args: {
+    storageId: v.string(),
+    projectIndex: v.number(),
+  },
+  handler: async (ctx, args) => {
+    // Get the authenticated user
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Unauthorized");
+    }
+    const userId = identity.subject;
+
+    // Get the most recent resume for this user
+    const resume = await ctx.db
+      .query("resume")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
+      .order("desc")
+      .first();
+    
+    if (!resume) {
+      throw new ConvexError("Resume not found");
+    }
+
+    try {
+      // Verify the file exists in storage
+      const exists = (await ctx.storage.getUrl(args.storageId)) !== null;
+      if (!exists) {
+        throw new ConvexError("File not found in storage");
+      }
+      
+      // Get the URL for the stored image
+      const imageUrl = await ctx.storage.getUrl(args.storageId);
+      
+      // Create a deep copy of the fieldJSON
+      const updatedFieldJSON = { ...resume.fieldJSON };
+      
+      // Make sure projects field exists and is an array
+      if (!updatedFieldJSON.projects || !Array.isArray(updatedFieldJSON.projects)) {
+        throw new ConvexError("Projects field not found or is not an array");
+      }
+      
+      // Make sure the projectIndex is valid
+      if (args.projectIndex < 0 || args.projectIndex >= updatedFieldJSON.projects.length) {
+        throw new ConvexError("Invalid project index");
+      }
+      
+      // Update the projectPicture field for the specified project item
+      updatedFieldJSON.projects[args.projectIndex].projectPicture = imageUrl;
+
+      // Update the resume with the modified fieldJSON
+      await ctx.db.patch(resume._id, {
+        fieldJSON: updatedFieldJSON,
+      });
+
+      return { 
+        success: true,
+        projectIndex: args.projectIndex,
+        imageUrl: imageUrl 
+      };
+    } catch (error) {
+      console.error("Error updating project image:", error);
+      throw new ConvexError("Failed to update project image");
+    }
+  },
+});
+
+// Function to update company logo
+export const updateCompanyLogo = mutation({
+  args: {
+    storageId: v.string(),
+    experienceIndex: v.number(),
+  },
+  handler: async (ctx, args) => {
+    // Get the authenticated user
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Unauthorized");
+    }
+    const userId = identity.subject;
+
+    // Get the most recent resume for this user
+    const resume = await ctx.db
+      .query("resume")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", userId))
+      .order("desc")
+      .first();
+    
+    if (!resume) {
+      throw new ConvexError("Resume not found");
+    }
+
+    try {
+      // Verify the file exists in storage
+      const exists = (await ctx.storage.getUrl(args.storageId)) !== null;
+      if (!exists) {
+        throw new ConvexError("File not found in storage");
+      }
+      
+      // Get the URL for the stored image
+      const imageUrl = await ctx.storage.getUrl(args.storageId);
+      
+      // Create a deep copy of the fieldJSON
+      const updatedFieldJSON = { ...resume.fieldJSON };
+      
+      // Make sure experience field exists and is an array
+      if (!updatedFieldJSON.experience || !Array.isArray(updatedFieldJSON.experience)) {
+        throw new ConvexError("Experience field not found or is not an array");
+      }
+      
+      // Make sure the experienceIndex is valid
+      if (args.experienceIndex < 0 || args.experienceIndex >= updatedFieldJSON.experience.length) {
+        throw new ConvexError("Invalid experience index");
+      }
+      
+      // Update the companyLogo field for the specified experience item
+      updatedFieldJSON.experience[args.experienceIndex].companyLogo = imageUrl;
+
+      // Update the resume with the modified fieldJSON
+      await ctx.db.patch(resume._id, {
+        fieldJSON: updatedFieldJSON,
+      });
+
+      return { 
+        success: true,
+        experienceIndex: args.experienceIndex,
+        logoUrl: imageUrl 
+      };
+    } catch (error) {
+      console.error("Error updating company logo:", error);
+      throw new ConvexError("Failed to update company logo");
+    }
+  },
+});
 
 // Delete a resume
 export const deleteResume = mutation({

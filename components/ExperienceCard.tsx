@@ -1,3 +1,4 @@
+"use client";
 import { Calendar } from "lucide-react";
 import {
   Accordion,
@@ -25,13 +26,14 @@ const ExperienceCard = ({
   logo,
   value,
 }: ExperienceCardProps) => {
+  console.log(logo);
   return (
     <AccordionItem value={value} className="border-b py-3">
       <AccordionTrigger className="hover:bg-gray-50 rounded-md py-2">
         <div className="flex items-start gap-4 w-full">
-          <div className="hidden md:flex min-w-[48px] h-12 w-12 rounded-md bg-secondary items-center justify-center">
+          <div className="hidden md:flex min-w-[48px] h-12 w-12  bg-secondary items-center justify-center">
             {logo ? (
-              <img src={logo} alt={company} className="w-8 h-8" />
+              <img src={logo} alt={company} className="w-12 h-12" />
             ) : (
               <span className="flex items-center justify-center w-full h-full font-bold">
                 {company.charAt(0)}

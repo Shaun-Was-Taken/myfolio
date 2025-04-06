@@ -30,7 +30,7 @@ const ProjectCard = ({
   image,
 }: ProjectCardProps) => {
   return (
-    <Card className="flex flex-col overflow-hidden border hover:shadow-lg transition-all duration-300 ease-out h-full">
+    <Card className="flex w-[97%] flex-col overflow-hidden border hover:shadow-lg transition-all duration-300 ease-out h-full">
       {image ? (
         <div>
           <img

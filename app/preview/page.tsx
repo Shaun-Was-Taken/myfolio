@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import Portfolio from "@/components/Portfolio";
 import { Button } from "@/components/ui/button";
 import { ConfettiButton } from "@/components/magicui/confetti";
-import { Send, Copy } from "lucide-react";
+import { Send, Copy, Edit } from "lucide-react";
 import confetti from "canvas-confetti";
 import {
   Dialog,
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 const PreviewPage = () => {
   const { user, isLoaded } = useUser();
@@ -88,19 +89,17 @@ const PreviewPage = () => {
   }
   return (
     <div className="flex justify-center gap-5 ">
-      <div className="max-w-[1300px] ">
-        <Portfolio portfolioData={portfolioData} />
+      <div className="max-w-[1200px]">
+        <Portfolio isPreview portfolioData={portfolioData} />
       </div>
 
-      <div className="py-20 max-w-[200px] flex-1 ">
+      <div className="py-20 max-w-[100px]  flex-1 flex flex-col gap-3">
         <Dialog>
           <DialogTrigger asChild>
-            <div className="relative">
-              <Button onClick={handleClick}>
-                Publish
-                <Send className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
+            <Button onClick={handleClick}>
+              Publish
+              <Send className="h-4 w-4" />
+            </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
@@ -135,6 +134,11 @@ const PreviewPage = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        <SidebarTrigger className="inline-flex items-center justify-center w-full h-9 px-4 py-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 shadow-xs">
+          Edit
+          <Edit className="h-4 w-4 ml-2" />
+        </SidebarTrigger>
       </div>
     </div>
   );
