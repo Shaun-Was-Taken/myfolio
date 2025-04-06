@@ -42,11 +42,6 @@ const Portfolio = ({ portfolioData }: PortfolioProps) => {
     return <div>Loading...</div>;
   }
 
-  // Use demo data if portfolioData is null or undefined
-  const displayData = portfolioData || demo;
-
-  console.log(displayData);
-
   return (
     <div className="min-h-screen bg-background flex flex-col items-center">
       <main className="w-[50%] max-w-7xl">
@@ -56,12 +51,12 @@ const Portfolio = ({ portfolioData }: PortfolioProps) => {
             <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
               <div>
                 <h1 className="text-4xl md:text-5xl font-bold mb-2 flex items-center">
-                  Hi, I'm {displayData.name}{" "}
+                  Hi, I'm {portfolioData.name}{" "}
                   <Hand className="ml-2 w-8 h-8 text-amber-400" />
                 </h1>
-                <p className="text-lg md:text-xl mb-4">{displayData.title}</p>
+                <p className="text-lg md:text-xl mb-4">{portfolioData.title}</p>
                 <p className="text-muted-foreground">
-                  {displayData.descripton}
+                  {portfolioData.descripton}
                 </p>
               </div>
             </div>
