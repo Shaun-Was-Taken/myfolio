@@ -25,6 +25,7 @@ export const createUser = internalMutation({
 
     await ctx.db.insert("users", {
       clerkId: args.clerkId,
+      displayId: args.email.split("@")[0],
       email: args.email,
       name: args.name,
       imageUrl: args.imageUrl,
@@ -41,6 +42,25 @@ export const getUserByClerkId = internalQuery({
     const user = await ctx.db
       .query("users")
       .withIndex("by_clerkId", (q) => q.eq("clerkId", args.clerkId))
+      .unique();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user;
+  },
+});
+
+//write a intern qury for getuserbydisplayid
+export const getUserByDisplayId = internalQuery({
+  args: {
+    displayId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_displayId", (q) => q.eq("displayId", args.displayId))
       .unique();
 
     if (!user) {

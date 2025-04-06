@@ -9,6 +9,7 @@ import { v } from "convex/values";
 import { ConvexError } from "convex/values";
 import { api, internal } from "./_generated/api";
 import OpenAI from "openai";
+import { getUserByClerkId } from "./user";
 
 export const generateUploadUrl = mutation({
   handler: async (ctx) => {
@@ -363,6 +364,41 @@ export const getPreviewData = query({
       return null;
     }
 
+    return resume.fieldJSON;
+  },
+});
+
+// Generate a portfolio from a resume
+export const getPublishData = query({
+  args: { clerkId: v.string(), displayId: v.string() },
+  handler: async (ctx, args) => {
+    // Get the authenticated user
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Unauthorized");
+    }
+
+    const user = await ctx.runQuery(internal.user.getUserByDisplayId, {
+      displayId: args.displayId,
+    });
+
+    if (user.displayId !== args.displayId) {
+      throw new ConvexError("Display ID does not exist or is incorrect");
+    }
+
+    // Get the resume
+    const resume = await ctx.db
+      .query("resume")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", args.clerkId))
+      .order("desc")
+      .first();
+    if (!resume) {
+      throw new ConvexError("Resume not found");
+    }
+
+    if (!resume) {
+      return null;
+    }
     return resume.fieldJSON;
   },
 });
