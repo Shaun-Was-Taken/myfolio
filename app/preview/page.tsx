@@ -55,8 +55,8 @@ const PreviewPage = () => {
     return <div>Loading...</div>;
   }
   return (
-    <div className="flex justify-center gap-20">
-      <div className="max-w-[60%]">
+    <div className="flex justify-center gap-5 ">
+      <div className="max-w-[1300px] ">
         <Portfolio portfolioData={portfolioData} />
       </div>
 

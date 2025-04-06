@@ -29,7 +29,7 @@ const Portfolio = ({ portfolioData }: PortfolioProps) => {
   const { isLoaded } = useUser();
 
   // Remove the useEffect that redirects non-logged in users
-  
+
   // Show loading state while loading data
   if (!isLoaded || portfolioData === undefined) {
     return <div>Loading...</div>;
@@ -37,7 +37,7 @@ const Portfolio = ({ portfolioData }: PortfolioProps) => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center">
-      <main className="w-[50%] max-w-7xl">
+      <main className="w-[60%] max-w-7xl">
         {/* Hero Section */}
         <section className="py-20 flex justify-between items-center">
           <div className="container mx-auto px-4">
