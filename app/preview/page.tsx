@@ -5,7 +5,9 @@ import { api } from "@/convex/_generated/api";
 import { useEffect, useState } from "react";
 import Portfolio from "@/components/Portfolio";
 import { Button } from "@/components/ui/button";
+import { ConfettiButton } from "@/components/magicui/confetti";
 import { Send, Copy } from "lucide-react";
+import confetti from "canvas-confetti";
 import {
   Dialog,
   DialogClose,
@@ -28,6 +30,36 @@ const PreviewPage = () => {
     api.resume.getPreviewData,
     isLoaded && user ? { clerkId: user.id } : "skip"
   );
+
+  const handleClick = () => {
+    const end = Date.now() + 3 * 1000; // 3 seconds
+    const colors = ["#a786ff", "#fd8bbc", "#eca184", "#f8deb1"];
+
+    const frame = () => {
+      if (Date.now() > end) return;
+
+      confetti({
+        particleCount: 2,
+        angle: 60,
+        spread: 55,
+        startVelocity: 60,
+        origin: { x: 0, y: 0.5 },
+        colors: colors,
+      });
+      confetti({
+        particleCount: 2,
+        angle: 120,
+        spread: 55,
+        startVelocity: 60,
+        origin: { x: 1, y: 0.5 },
+        colors: colors,
+      });
+
+      requestAnimationFrame(frame);
+    };
+
+    frame();
+  };
 
   // Use useEffect for navigation instead of conditional rendering
   useEffect(() => {
@@ -60,13 +92,15 @@ const PreviewPage = () => {
         <Portfolio portfolioData={portfolioData} />
       </div>
 
-      <div className="py-20 max-w-[200px] flex-1">
+      <div className="py-20 max-w-[200px] flex-1 ">
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="flex items-center justify-center cursor-pointer">
-              Publish
-              <Send className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="relative">
+              <Button onClick={handleClick}>
+                Publish
+                <Send className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
@@ -85,11 +119,11 @@ const PreviewPage = () => {
               <Button
                 type="button"
                 size="sm"
-                className="px-3"
+                className="px-3 cursor-pointer"
                 onClick={copyToClipboard}
               >
                 <span className="sr-only">Copy</span>
-                <Copy className="h-4 w-4" />
+                <Copy className="h-4 w-4 cursor-pointer" />
               </Button>
             </div>
             <DialogFooter className="sm:justify-start">
