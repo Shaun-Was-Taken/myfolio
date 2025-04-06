@@ -53,7 +53,7 @@ const Portfolio = ({ portfolioData, isPreview }: PortfolioProps) => {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center">
       <main
-        className={`w-full md:${isPreview ? "w-[70%]" : "w-[50%]"} lg:${isPreview ? "w-[70%]" : "w-[50%]"} max-w-7xl px-4 sm:px-6`}
+        className={`w-full md:${isPreview ? "w-[70%]" : "w-[50%]"} lg:${isPreview ? "w-[70%]" : "w-[50%]"} max-w-4xl px-4 sm:px-6`}
       >
         {/* Hero Section */}
         <section className="py-10 md:py-20">

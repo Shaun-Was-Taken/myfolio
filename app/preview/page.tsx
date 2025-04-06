@@ -89,11 +89,11 @@ const PreviewPage = () => {
   }
   return (
     <div className="flex justify-center gap-5 ">
-      <div className="max-w-[1200px]">
-        <Portfolio isPreview portfolioData={portfolioData} />
+      <div className="max-w-[1200px] ml-56">
+        <Portfolio portfolioData={portfolioData} />
       </div>
 
-      <div className="py-20 max-w-[100px]  flex-1 flex flex-col gap-3">
+      <div className="max-w-[200px] flex-1 mt-20  flex flex-col gap-3">
         <Dialog>
           <DialogTrigger asChild>
             <Button onClick={handleClick}>
