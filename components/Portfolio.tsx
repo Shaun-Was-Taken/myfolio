@@ -37,9 +37,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface PortfolioProps {
   portfolioData: any;
+  isPreview?: boolean;
 }
 
-const Portfolio = ({ portfolioData }: PortfolioProps) => {
+const Portfolio = ({ portfolioData, isPreview }: PortfolioProps) => {
   const { isLoaded } = useUser();
 
   // Remove the useEffect that redirects non-logged in users
@@ -51,7 +52,7 @@ const Portfolio = ({ portfolioData }: PortfolioProps) => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center">
-      <main className="w-[60%] max-w-7xl">
+      <main className={`${isPreview ? "w-[70%]" : "w-[50%]"} max-w-7xl`}>
         {/* Hero Section */}
         <section className="py-20 flex justify-between items-center">
           <div className="container mx-auto px-4">
@@ -64,14 +65,14 @@ const Portfolio = ({ portfolioData }: PortfolioProps) => {
                   {portfolioData.title}{" "}
                 </p>
                 <p className="text-muted-foreground">
-                  {portfolioData.descripton}
+                  {portfolioData.description}
                 </p>
               </div>
             </div>
           </div>
           <div>
             <Avatar className="h-40 w-40">
-              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarImage src={portfolioData.profilePicture} />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </div>
@@ -113,7 +114,7 @@ const Portfolio = ({ portfolioData }: PortfolioProps) => {
                     period={exp.period}
                     location={exp.location}
                     descriptions={exp.description}
-                    logo={undefined}
+                    logo={exp.companyLogo}
                     value={`experience-${index}`}
                   />
                 ))}
@@ -192,7 +193,7 @@ const Portfolio = ({ portfolioData }: PortfolioProps) => {
                     tags={project.tags}
                     githubLink={project.githubLink || undefined}
                     liveLink={project.liveLink || undefined}
-                    image=""
+                    image={project.projectPicture || undefined}
                   />
                 ))}
               </div>
