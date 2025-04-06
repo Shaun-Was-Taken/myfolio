@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react"; // Removed useEffect since it's not used
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Upload,
@@ -14,12 +14,12 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; // Added router
-import { useUser } from "@clerk/nextjs"; // Added useUser
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 const GenPage = () => {
-  const router = useRouter(); // Initialize router
-  const { user, isLoaded } = useUser(); // Get user info
+  const router = useRouter();
+  const { user, isLoaded } = useUser();
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,6 +28,48 @@ const GenPage = () => {
   const [generating, setGenerating] = useState(false);
   const [parsedText, setParsedText] = useState<string | null>(null);
   const [parsing, setParsing] = useState(false);
+
+  // Add these drag and drop handlers inside the component
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (parsing || uploading) return;
+    
+    const droppedFiles = e.dataTransfer.files;
+    if (droppedFiles.length > 0) {
+      const selectedFile = droppedFiles[0];
+      
+      // Check file type
+      const fileType = selectedFile.type;
+      if (
+        fileType !== "application/pdf"
+      ) {
+        setError("Please upload a PDF");
+        return;
+      }
+
+      // Check file size (limit to 5MB)
+      if (selectedFile.size > 5 * 1024 * 1024) {
+        setError("File size should be less than 5MB");
+        return;
+      }
+
+      setFile(selectedFile);
+      setError(null);
+      setParsedText(null);
+    }
+  };
 
   const hasGenerated = useQuery(api.user.hasGeneratedPortfolio);
 
@@ -58,11 +100,9 @@ const GenPage = () => {
     // Check file type
     const fileType = selectedFile.type;
     if (
-      fileType !== "application/pdf" &&
-      fileType !==
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      fileType !== "application/pdf"
     ) {
-      setError("Please upload a PDF or DOCX file");
+      setError("Please upload a PDF");
       return;
     }
 
@@ -251,7 +291,7 @@ const GenPage = () => {
               ? resume?.status === "processed"
                 ? "Your resume has been analyzed and is ready for portfolio generation."
                 : "Your resume is being analyzed. This may take a moment."
-              : "Upload your resume in PDF or DOCX format and we'll transform it into a professional portfolio website."}
+              : "Upload your resume in PDF format and we'll transform it into a professional portfolio website."}
           </p>
         </div>
 
@@ -268,6 +308,9 @@ const GenPage = () => {
                   !(parsing || uploading) &&
                   document.getElementById("resume-upload")?.click()
                 }
+                onDragOver={handleDragOver}
+                onDragEnter={handleDragEnter}
+                onDrop={handleDrop}
               >
                 {parsing ? (
                   <div className="flex flex-col items-center gap-4">
@@ -320,7 +363,7 @@ const GenPage = () => {
                         Drag and drop your resume here
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        or click to browse (PDF or DOCX, max 5MB)
+                        or click to browse (PDF, max 5MB)
                       </p>
                     </div>
                   </div>
@@ -330,7 +373,7 @@ const GenPage = () => {
                   type="file"
                   id="resume-upload"
                   className="hidden"
-                  accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  accept=".pdf,application/pdf"
                   onChange={handleFileChange}
                 />
               </div>
@@ -407,3 +450,4 @@ const GenPage = () => {
 };
 
 export default GenPage;
+

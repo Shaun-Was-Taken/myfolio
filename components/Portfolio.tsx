@@ -4,35 +4,13 @@ import ExperienceCard from "@/components/ExperienceCard";
 import EducationCard from "@/components/EducationCard";
 import ProjectCard from "@/components/ProjectCard";
 import ContactSection from "@/components/ContactSection";
-import {
-  Hand,
-  Github,
-  Linkedin,
-  ChevronDown,
-  ChevronUp,
-  Download,
-} from "lucide-react";
 import CertificationCard from "@/components/CertificationCard";
-import { demo } from "./Demo";
-// Sample portfolio data - replace with your actual data
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 import {
   Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useUser } from "@clerk/nextjs";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface PortfolioProps {
@@ -42,8 +20,6 @@ interface PortfolioProps {
 
 const Portfolio = ({ portfolioData, isPreview }: PortfolioProps) => {
   const { isLoaded } = useUser();
-
-  // Remove the useEffect that redirects non-logged in users
 
   // Show loading state while loading data
   if (!isLoaded || portfolioData === undefined) {
@@ -161,7 +137,6 @@ const Portfolio = ({ portfolioData, isPreview }: PortfolioProps) => {
 
               {portfolioData.skills.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="font-semibold mb-2">Programming Languages</h3>
                   <div>
                     {portfolioData.skills.map((skill: any, index: any) => (
                       <SkillTag key={index} name={skill} />
