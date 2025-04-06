@@ -1,8 +1,13 @@
+"use client"
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { SignInButton, useAuth } from "@clerk/nextjs";
+import CustomProfile from "./CustomProfile";
 
 const HeroSection = () => {
+  const { isSignedIn } = useAuth();
   return (
     <section className="py-10 md:py-16 lg:py-24 px-4 sm:px-6 md:px-12">
       <div className="container mx-auto max-w-4xl text-center animate-fade-in">
@@ -21,13 +26,36 @@ const HeroSection = () => {
           design skills needed. 🎨
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Button
-            size="lg"
-            className="w-full sm:w-auto rounded-full px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-medium group hover:scale-105 transition-all shadow-lg hover:shadow-xl"
-          >
-            Get Started
-            <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
-          </Button>
+            <div className="pt-2">
+                {isSignedIn ? (
+                  <Link href="/gen ">
+                    
+                    <SignInButton mode="modal">
+                      <Button variant="default" size="lg" className="w-full sm:w-auto rounded-full px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-medium group hover:scale-105 transition-all shadow-lg hover:shadow-xl">
+                        Get Started
+                        <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                </SignInButton>
+                </Link>
+                ) : (
+                  <SignInButton mode="modal">
+                    <Button variant="default" size="lg" className="w-full sm:w-auto rounded-full px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-medium group hover:scale-105 transition-all shadow-lg hover:shadow-xl">
+                    Get Started
+                    <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </SignInButton>
+                )}
+              </div>
+            <Link href="/demo">
+              <Button
+                variant="secondary"              
+                size="lg"
+                className="w-full sm:w-auto rounded-full px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-medium group hover:scale-105 transition-all shadow-lg hover:shadow-xl"
+              >
+                Demo
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
         </div>
       </div>
     </section>

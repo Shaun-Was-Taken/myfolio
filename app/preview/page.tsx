@@ -87,10 +87,11 @@ const PreviewPage = () => {
   if (!isLoaded || portfolioData === undefined) {
     return <div>Loading...</div>;
   }
+
   return (
-    <div className="flex justify-center gap-5 ">
-      <div className="max-w-[1200px] ml-56">
-        <Portfolio portfolioData={portfolioData} />
+    <div className="flex justify-center gap-5 w-screen">
+      <div className="max-w-[1200px]">
+        <Portfolio isPreview portfolioData={portfolioData} />
       </div>
 
       <div className="max-w-[200px] flex-1 mt-20  flex flex-col gap-3">
