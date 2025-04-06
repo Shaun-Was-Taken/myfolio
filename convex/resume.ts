@@ -160,9 +160,10 @@ Required JSON format with example values:
   "projects": [
     {
       "title": "name of project",
-      "description": "",
+      "projectPicture": "can be null",
+      "description": "generate project description, highlight important words between ****",
       "period": "can be null",
-      "tags": [],
+      "tags": ["generate tags according to the current project, generate at max 5"],
       "githubLink": "can be null",
       "liveLink": "can be null"
     }

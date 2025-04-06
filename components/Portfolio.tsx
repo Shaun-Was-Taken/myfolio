@@ -4,10 +4,24 @@ import ExperienceCard from "@/components/ExperienceCard";
 import EducationCard from "@/components/EducationCard";
 import ProjectCard from "@/components/ProjectCard";
 import ContactSection from "@/components/ContactSection";
-import { Hand, Github, Linkedin, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Hand,
+  Github,
+  Linkedin,
+  ChevronDown,
+  ChevronUp,
+  Download,
+} from "lucide-react";
 import CertificationCard from "@/components/CertificationCard";
 import { demo } from "./Demo";
 // Sample portfolio data - replace with your actual data
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import {
   Accordion,
@@ -44,10 +58,11 @@ const Portfolio = ({ portfolioData }: PortfolioProps) => {
             <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
               <div>
                 <h1 className="text-4xl md:text-5xl font-bold mb-2 flex items-center">
-                  Hi, I'm {portfolioData.name}{" "}
-                  <Hand className="ml-2 w-8 h-8 text-amber-400" />
+                  Hi, I'm {portfolioData.name} 👋
                 </h1>
-                <p className="text-lg md:text-xl mb-4">{portfolioData.title}</p>
+                <p className="text-lg md:text-xl mb-4 flex gap-5 mt-2">
+                  {portfolioData.title}{" "}
+                </p>
                 <p className="text-muted-foreground">
                   {portfolioData.descripton}
                 </p>
@@ -177,6 +192,7 @@ const Portfolio = ({ portfolioData }: PortfolioProps) => {
                     tags={project.tags}
                     githubLink={project.githubLink || undefined}
                     liveLink={project.liveLink || undefined}
+                    image=""
                   />
                 ))}
               </div>
