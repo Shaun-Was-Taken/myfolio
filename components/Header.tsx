@@ -28,7 +28,7 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             <Link
-              href="#how-it-works"
+              href="/#how-it-works"
               className="text-md font-medium hover:text-primary/80 transition-colors"
             >
               How It Works
@@ -52,7 +52,7 @@ const Header = () => {
           </nav>
 
           {/* Mobile Menu Button */}
-          <button 
+          <button
             className="md:hidden flex items-center p-2"
             onClick={toggleMobileMenu}
             aria-label="Toggle menu"
@@ -110,7 +110,11 @@ const Header = () => {
                   <CustomProfile />
                 ) : (
                   <SignInButton mode="modal">
-                    <Button variant="default" size="lg" className="rounded-full w-full">
+                    <Button
+                      variant="default"
+                      size="lg"
+                      className="rounded-full w-full"
+                    >
                       Login
                     </Button>
                   </SignInButton>

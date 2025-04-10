@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
@@ -25,30 +25,36 @@ const HeroSection = () => {
           Transform your resume into a stunning portfolio website in seconds. No
           design skills needed. 🎨
         </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <div className="pt-2">
-                {isSignedIn ? (
-                  <Link href="/gen ">
-                    
-                    <SignInButton mode="modal">
-                      <Button variant="default" size="lg" className="w-full sm:w-auto rounded-full px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-medium group hover:scale-105 transition-all shadow-lg hover:shadow-xl">
-                        Get Started
-                        <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
-                      </Button>
-                </SignInButton>
-                </Link>
-                ) : (
-                  <SignInButton mode="modal">
-                    <Button variant="default" size="lg" className="w-full sm:w-auto rounded-full px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-medium group hover:scale-105 transition-all shadow-lg hover:shadow-xl">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
+          <div className="pt-2 flex gap-5">
+            {isSignedIn ? (
+              <Link href="/gen ">
+                <SignInButton mode="modal">
+                  <Button
+                    variant="default"
+                    size="lg"
+                    className="w-full sm:w-auto rounded-full px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-medium group hover:scale-105 transition-all shadow-lg hover:shadow-xl"
+                  >
                     Get Started
                     <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                  </SignInButton>
-                )}
-              </div>
+                  </Button>
+                </SignInButton>
+              </Link>
+            ) : (
+              <SignInButton mode="modal">
+                <Button
+                  variant="default"
+                  size="lg"
+                  className="w-full sm:w-auto rounded-full px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-medium group hover:scale-105 transition-all shadow-lg hover:shadow-xl"
+                >
+                  Get Started
+                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </SignInButton>
+            )}
             <Link href="/demo">
               <Button
-                variant="secondary"              
+                variant="secondary"
                 size="lg"
                 className="w-full sm:w-auto rounded-full px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg font-medium group hover:scale-105 transition-all shadow-lg hover:shadow-xl"
               >
@@ -56,6 +62,7 @@ const HeroSection = () => {
                 <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
+          </div>
         </div>
       </div>
     </section>

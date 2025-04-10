@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const viewport: Viewport = {
-  width: 'device-width',
+  width: "device-width",
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
@@ -25,7 +25,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "MyFolio - Your Professional Portfolio Builder",
-  description: "Create a beautiful portfolio website from your resume in minutes",
+  description:
+    "Create a beautiful portfolio website from your resume in minutes",
 };
 
 export default function RootLayout({
@@ -37,12 +38,11 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressContentEditableWarning
       >
         <ConvexClientProvider>
           <Header />
-          <main>
-            {children}
-          </main>
+          <main>{children}</main>
           <Footer />
           <Toaster position="top-center" />
         </ConvexClientProvider>
